@@ -56,6 +56,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback{
     private long endTimeMS;
 
     private Paint paint = new Paint();
+    private Paint paintStroke = new Paint();
 
     public GamePanel(Context context) {
         super(context);
@@ -82,10 +83,6 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback{
         circlePlayer.update(playerPoint);
 
         startTime = System.currentTimeMillis();
-
-        paint.setTextAlign(Paint.Align.CENTER);
-        paint.setTextSize(100);
-        paint.setColor(rgb(255, 187, 105));
 
         setFocusable(true);
     }
@@ -242,10 +239,21 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback{
         obstacleManager.draw(canvas);
         circlePlayer.draw(canvas);
 
+        paint.setTextAlign(Paint.Align.CENTER);
+        paint.setTextSize(100);
+        paint.setColor(rgb(255, 255, 255));
+        paintStroke.setStyle(Paint.Style.STROKE);
+        paintStroke.setStrokeWidth(3);
+        paintStroke.setColor(rgb(0,0,0));
+        paintStroke.setTextAlign(Paint.Align.CENTER);
+        paintStroke.setTextSize(100);
+
         if(death) {
             canvas.drawText("OUT OF BOUNDS - Tap To Retry",Constants.SCREEN_WIDTH/2,Constants.SCREEN_HEIGHT/2,paint);
+            canvas.drawText("OUT OF BOUNDS - Tap To Retry",Constants.SCREEN_WIDTH/2,Constants.SCREEN_HEIGHT/2,paintStroke);
         } else if(goal) {
             canvas.drawText("Completed in " + endTime + "." + endTimeMS + "s - Tap For Next Hole",Constants.SCREEN_WIDTH/2,Constants.SCREEN_HEIGHT/2,paint);
+            canvas.drawText("Completed in " + endTime + "." + endTimeMS + "s - Tap For Next Hole",Constants.SCREEN_WIDTH/2,Constants.SCREEN_HEIGHT/2,paintStroke);
         }
     }
 }
