@@ -74,7 +74,22 @@ public class LevelManager {
         obstacles.add(new Obstacle(3.25,8.75,3.25,3.75,0));
         // Goal
         obstacles.add(new Obstacle(7.25,7.75,2.25,2.75,2));
-        levels.add(new Level(obstacles, 1, 2.5));
+        levels.add(new Level(obstacles, 0.85, 4));
+
+        // Level 6
+        obstacles = new ArrayList<>();
+        //Wall
+        obstacles.add(new Obstacle(0,10,0,0.5,1));
+        obstacles.add(new Obstacle(0,10,4.5,5,1));
+        obstacles.add(new Obstacle(0,0.5,0,5,1));
+        obstacles.add(new Obstacle(9.5,10,0,5,1));
+        obstacles.add(new Obstacle(1.25,1.75,1.25,5,1));
+        obstacles.add(new Obstacle(1.25,8.75,1.25,1.75,1));
+        obstacles.add(new Obstacle(8.25,8.75,1.25,3.75,1));
+        obstacles.add(new Obstacle(3.25,8.75,3.25,3.75,1));
+        // Goal
+        obstacles.add(new Obstacle(7.25,7.75,2.25,2.75,2));
+        levels.add(new Level(obstacles, 0.85, 4));
     }
 
     public Level getLevel(int id){
