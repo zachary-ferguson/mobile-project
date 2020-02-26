@@ -19,12 +19,13 @@ public class ObstacleManager {
 
     }
 
-    public Obstacle playerCollide(CirclePlayer player) {
+    public ArrayList<Obstacle> playerCollide(CirclePlayer player) {
+        ArrayList<Obstacle> collide = new ArrayList<>();
         for(Obstacle ob : obstacles){
             if(ob.playerCollide(player))
-                return ob;
+                collide.add(ob);
         }
-        return null;
+        return collide;
     }
 
     public void createObstacles(Level levelIn) {

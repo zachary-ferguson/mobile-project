@@ -14,6 +14,8 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.WindowManager;
 
+import java.util.ArrayList;
+
 import static android.graphics.Color.rgb;
 import static java.lang.Math.abs;
 
@@ -199,46 +201,48 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback{
             circlePlayer.update(playerPoint);
             obstacleManager.update();
 
-            Obstacle collideObstacle = obstacleManager.playerCollide(circlePlayer);
+            ArrayList<Obstacle> collideObstacles = obstacleManager.playerCollide(circlePlayer);
 
-            if(collideObstacle != null) {
-                if (collideObstacle.getType() == 1) {
-                    //System.out.println("Player Death");
-                    death = true;
-                } else if (collideObstacle.getType() == 0) {
-                    Rect obRect = collideObstacle.getRectangle();
+            for(Obstacle collideObstacle : collideObstacles) {
+                if (collideObstacle != null) {
+                    if (collideObstacle.getType() == 1) {
+                        //System.out.println("Player Death");
+                        death = true;
+                    } else if (collideObstacle.getType() == 0) {
+                        Rect obRect = collideObstacle.getRectangle();
 
-                    leftCheck = abs(playerPoint.x + playerWidth/2 - obRect.left);
-                    rightCheck = abs(playerPoint.x - playerWidth/2 - obRect.right);
-                    topCheck = abs(playerPoint.y + playerHeight/2 - obRect.top);
-                    bottomCheck = abs(playerPoint.y - playerHeight/2 - obRect.bottom);
+                        leftCheck = abs(playerPoint.x + playerWidth / 2 - obRect.left);
+                        rightCheck = abs(playerPoint.x - playerWidth / 2 - obRect.right);
+                        topCheck = abs(playerPoint.y + playerHeight / 2 - obRect.top);
+                        bottomCheck = abs(playerPoint.y - playerHeight / 2 - obRect.bottom);
 
-                    minCollisionVertical = Math.min(topCheck,bottomCheck);
-                    minCollisionHorizontal = Math.min(leftCheck,rightCheck);
-                    minCollision = Math.min(minCollisionHorizontal, minCollisionVertical);
-                    if(minCollision == leftCheck){
-                        playerPoint.x = obRect.left - playerWidth/2;
-                    }else if(minCollision == rightCheck){
-                        playerPoint.x = obRect.right + playerWidth/2;
-                    }else if(minCollision == bottomCheck){
-                        playerPoint.y = obRect.bottom + playerHeight/2;
-                    }else{
-                        playerPoint.y = obRect.top - playerHeight/2;
+                        minCollisionVertical = Math.min(topCheck, bottomCheck);
+                        minCollisionHorizontal = Math.min(leftCheck, rightCheck);
+                        minCollision = Math.min(minCollisionHorizontal, minCollisionVertical);
+                        if (minCollision == leftCheck) {
+                            playerPoint.x = obRect.left - playerWidth / 2;
+                        } else if (minCollision == rightCheck) {
+                            playerPoint.x = obRect.right + playerWidth / 2;
+                        } else if (minCollision == bottomCheck) {
+                            playerPoint.y = obRect.bottom + playerHeight / 2;
+                        } else {
+                            playerPoint.y = obRect.top - playerHeight / 2;
+                        }
+                        circlePlayer.update(playerPoint);
+                    } else if (collideObstacle.getType() == 2) {
+                        endTimeMS = System.currentTimeMillis() - startTime;
+                        endTime = endTimeMS / 1000;
+                        endTimeMS -= (endTime * 1000);
+                        goal = true;
                     }
-                    circlePlayer.update(playerPoint);
-                } else if(collideObstacle.getType() == 2){
-                    endTimeMS = System.currentTimeMillis() - startTime;
-                    endTime = endTimeMS / 1000;
-                    endTimeMS -= (endTime * 1000);
-                    goal = true;
-                }
-                if(collideObstacle.getType() == 3){
-                    sand = true;
+                    if (collideObstacle.getType() == 3) {
+                        sand = true;
+                    } else {
+                        sand = false;
+                    }
                 } else {
                     sand = false;
                 }
-            } else {
-                sand = false;
             }
         }
     }
