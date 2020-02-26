@@ -6,10 +6,10 @@ import java.util.ArrayList;
 
 public class Level {
     private ArrayList<Obstacle> obstacles;
-    private int startX;
-    private int startY;
+    private double startX;
+    private double startY;
 
-    public Level(ArrayList<Obstacle> obstacles, int startX, int startY){
+    public Level(ArrayList<Obstacle> obstacles, double startX, double startY){
         this.obstacles = obstacles;
         this.startX = startX*Constants.X_UNIT;
         this.startY = startY*Constants.Y_UNIT;
@@ -20,6 +20,6 @@ public class Level {
     }
 
     public Point getStart(){
-        return new Point(startX,startY);
+        return new Point((int)startX,(int)startY);
     }
 }

@@ -29,6 +29,37 @@ public class LevelManager {
         //Goal
         obstacles.add(new Obstacle(6.75,7.25,0.75,1.25,2));
         levels.add(new Level(obstacles, 1, 4));
+
+        // Level 3
+        obstacles = new ArrayList<>();
+        //Sand
+        obstacles.add(new Obstacle(4,7,0,5,3));
+        //Goal
+        obstacles.add(new Obstacle(8.75,9.25,2.25,2.75,2));
+        levels.add(new Level(obstacles, 1, 2.5));
+
+        // Level 4
+        obstacles = new ArrayList<>();
+        //Water
+        obstacles.add(new Obstacle(4,7,0,2,1));
+        obstacles.add(new Obstacle(4,7,3,5,1));
+        //Sand
+        obstacles.add(new Obstacle(4,7,2,3,3));
+        //Goal
+        obstacles.add(new Obstacle(8.75,9.25,2.25,2.75,2));
+        levels.add(new Level(obstacles, 1, 2.5));
+
+        // Level 5
+        obstacles = new ArrayList<>();
+        //Wall
+        obstacles.add(new Obstacle(3,5,4,5,0));
+        // Water
+        obstacles.add(new Obstacle(6,7,0,4,1));
+        // Sand
+        obstacles.add(new Obstacle(3,5,0,4,3));
+        // Goal
+        obstacles.add(new Obstacle(8.5,9,0.75,1.25,2));
+        levels.add(new Level(obstacles, 1, 2.5));
     }
 
     public Level getLevel(int id){

@@ -49,6 +49,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback{
 
     private boolean death = false;
     private boolean goal = false;
+    private boolean sand = false;
     private OrientationData orientationData; //move to gamePlayScene when made
     private long frameTime; //move to gamePlayScene when made
     private long startTime;
@@ -173,8 +174,14 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback{
                 float pitch = orientationData.getOrientation()[1] - orientationData.getStartOrientation()[1];
                 float roll = orientationData.getOrientation()[2] - orientationData.getStartOrientation()[2];
 
-                ySpeed = roll * Constants.SCREEN_WIDTH/1000f;
-                xSpeed = pitch * Constants.SCREEN_HEIGHT/1000f;
+                if(sand){
+                    ySpeed = roll * Constants.SCREEN_WIDTH/2000f;
+                    xSpeed = pitch * Constants.SCREEN_HEIGHT/2000f;
+                } else {
+                    ySpeed = roll * Constants.SCREEN_WIDTH/1000f;
+                    xSpeed = pitch * Constants.SCREEN_HEIGHT/1000f;
+                }
+
 
                 playerPoint.x -= abs(xSpeed*elapsedTime) > 1 ? xSpeed*elapsedTime : 0;
                 playerPoint.y -= abs(ySpeed*elapsedTime) > 1 ? ySpeed*elapsedTime : 0;
@@ -225,6 +232,13 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback{
                     endTimeMS -= (endTime * 1000);
                     goal = true;
                 }
+                if(collideObstacle.getType() == 3){
+                    sand = true;
+                } else {
+                    sand = false;
+                }
+            } else {
+                sand = false;
             }
         }
     }
