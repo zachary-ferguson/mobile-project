@@ -164,8 +164,6 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback{
     }
 
     public void update() {
-        //rectPlayer.update(playerPoint);
-        //init time comparison needed here go back to ep 7
 
         if(!death && !goal){
             if(frameTime < Constants.INIT_TIME)
