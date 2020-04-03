@@ -38,6 +38,10 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback{
 
     private float ySpeed;
     private float xSpeed;
+    private float maxXSpeed;
+    private float maxYSpeed;
+    private float xAccel;
+    private float yAccel;
 
     private float leftCheck;
     private float rightCheck;
@@ -57,6 +61,8 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback{
     private long startTime;
     private long endTime;
     private long endTimeMS;
+    private long currentTime;
+    private long currentTimeDS;
 
     private Paint paint = new Paint();
     private Paint paintStroke = new Paint();
@@ -85,6 +91,12 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback{
         playerPoint = levelManager.getLevel(currentLevel).getStart();
         circlePlayer.update(playerPoint);
 
+        ySpeed = 0;
+        xSpeed = 0;
+
+        maxYSpeed = 1.5f;
+        maxXSpeed = 1.5f;
+
         startTime = System.currentTimeMillis();
 
         setFocusable(true);
@@ -97,6 +109,8 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback{
             playerPoint = levelManager.getLevel(currentLevel).getStart();
             circlePlayer.update(playerPoint);
             movingPlayer = false;
+            ySpeed = 0;
+            xSpeed = 0;
             startTime = System.currentTimeMillis();
         } catch(Exception e){
 
@@ -176,33 +190,69 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback{
                 float pitch = orientationData.getOrientation()[1] - orientationData.getStartOrientation()[1];
                 float roll = orientationData.getOrientation()[2] - orientationData.getStartOrientation()[2];
 
-                if(sand){
+                /**if(sand){
                     ySpeed = roll * Constants.SCREEN_WIDTH/2000f;
                     xSpeed = pitch * Constants.SCREEN_HEIGHT/2000f;
                 } else {
                     ySpeed = roll * Constants.SCREEN_WIDTH/1000f;
                     xSpeed = pitch * Constants.SCREEN_HEIGHT/1000f;
+                }*/
+                xAccel = pitch * Constants.SCREEN_HEIGHT/10000f;
+                yAccel = roll * Constants.SCREEN_WIDTH/15000f;
+                if(sand){
+                    System.out.println("Ran into sand");
+                    xSpeed += xAccel/2;
+                    if(xSpeed > maxXSpeed/3){
+                        xSpeed = maxXSpeed/3;
+                    } else if (xSpeed < -maxXSpeed/3){
+                        xSpeed = -maxXSpeed/3;
+                    }
+                    ySpeed += yAccel/2;
+                    if(ySpeed > maxYSpeed/3){
+                        ySpeed = maxYSpeed/3;
+                    } else if (ySpeed < -maxYSpeed/3){
+                        ySpeed = -maxYSpeed/3;
+                    }
+                } else {
+                    xSpeed += xAccel;
+                    if(xSpeed > maxXSpeed){
+                        xSpeed = maxXSpeed;
+                    } else if (xSpeed < -maxXSpeed){
+                        xSpeed = -maxXSpeed;
+                    }
+
+                    ySpeed += yAccel;
+                    if(ySpeed > maxYSpeed){
+                        ySpeed = maxYSpeed;
+                    } else if (ySpeed < -maxYSpeed){
+                        ySpeed = -maxYSpeed;
+                    }
                 }
 
+                System.out.println("xSpeed: " + xSpeed + " ySpeed: " + ySpeed);
 
-                playerPoint.x -= abs(xSpeed*elapsedTime) > 1 ? xSpeed*elapsedTime : 0;
-                playerPoint.y -= abs(ySpeed*elapsedTime) > 1 ? ySpeed*elapsedTime : 0;
+                playerPoint.x -= abs(xSpeed*elapsedTime) > 2 ? xSpeed*elapsedTime : 0;
+                playerPoint.y -= abs(ySpeed*elapsedTime) > 2 ? ySpeed*elapsedTime : 0;
             }
 
-            if(playerPoint.x - playerWidth/2<0)
-                playerPoint.x = playerWidth/2;
-            else if(playerPoint.x + playerWidth/2 > Constants.SCREEN_WIDTH)
-                playerPoint.x = Constants.SCREEN_WIDTH - playerWidth/2;
-            if(playerPoint.y - playerHeight/2 < 0)
-                playerPoint.y = playerHeight/2;
-            else if(playerPoint.y + playerHeight/2 > Constants.SCREEN_HEIGHT)
-                playerPoint.y = Constants.SCREEN_HEIGHT - playerHeight/2;
-
+            if(playerPoint.x - playerWidth/2<0) {
+                playerPoint.x = playerWidth / 2;
+                xSpeed = -xSpeed/2;
+            } else if(playerPoint.x + playerWidth/2 > Constants.SCREEN_WIDTH) {
+                playerPoint.x = Constants.SCREEN_WIDTH - playerWidth / 2;
+                xSpeed = -xSpeed/2;
+            } if(playerPoint.y - playerHeight/2 < 0) {
+                playerPoint.y = playerHeight / 2;
+                ySpeed = -ySpeed/2;
+            } else if(playerPoint.y + playerHeight/2 > Constants.SCREEN_HEIGHT) {
+                playerPoint.y = Constants.SCREEN_HEIGHT - playerHeight / 2;
+                ySpeed = -ySpeed/2;
+            }
             circlePlayer.update(playerPoint);
             obstacleManager.update();
 
             ArrayList<Obstacle> collideObstacles = obstacleManager.playerCollide(circlePlayer);
-
+            sand = false;
             for(Obstacle collideObstacle : collideObstacles) {
                 if (collideObstacle != null) {
                     if (collideObstacle.getType() == 1) {
@@ -220,13 +270,17 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback{
                         minCollisionHorizontal = Math.min(leftCheck, rightCheck);
                         minCollision = Math.min(minCollisionHorizontal, minCollisionVertical);
                         if (minCollision == leftCheck) {
+                            xSpeed = -xSpeed/2;
                             playerPoint.x = obRect.left - playerWidth / 2;
                         } else if (minCollision == rightCheck) {
+                            xSpeed = -xSpeed/2;
                             playerPoint.x = obRect.right + playerWidth / 2;
                         } else if (minCollision == bottomCheck) {
                             playerPoint.y = obRect.bottom + playerHeight / 2;
+                            ySpeed = -ySpeed/2;
                         } else {
                             playerPoint.y = obRect.top - playerHeight / 2;
+                            ySpeed = -ySpeed/2;
                         }
                         circlePlayer.update(playerPoint);
                     } else if (collideObstacle.getType() == 2) {
@@ -237,11 +291,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback{
                     }
                     if (collideObstacle.getType() == 3) {
                         sand = true;
-                    } else {
-                        sand = false;
                     }
-                } else {
-                    sand = false;
                 }
             }
         }
@@ -265,6 +315,18 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback{
         paintStroke.setColor(rgb(0,0,0));
         paintStroke.setTextAlign(Paint.Align.CENTER);
         paintStroke.setTextSize(100);
+
+        if(!death && !goal) {
+            currentTimeDS = System.currentTimeMillis() - startTime;
+            currentTime = currentTimeDS / 1000;
+            currentTimeDS -= (currentTime * 1000);
+            currentTimeDS = currentTimeDS / 100;
+        }
+
+        if(!goal) {
+            canvas.drawText(currentTime + "." + currentTimeDS + "s", Constants.SCREEN_WIDTH - 150, 100, paint);
+            canvas.drawText(currentTime + "." + currentTimeDS + "s", Constants.SCREEN_WIDTH - 150, 100, paintStroke);
+        }
 
         if(death) {
             canvas.drawText("OUT OF BOUNDS - Tap To Retry",Constants.SCREEN_WIDTH/2,Constants.SCREEN_HEIGHT/2,paint);
