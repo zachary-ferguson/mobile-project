@@ -1,14 +1,12 @@
 package com.example.mobileproject;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
-import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
-public class MainActivity extends Activity {
+public class GameActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,12 +21,6 @@ public class MainActivity extends Activity {
         Constants.X_UNIT = Constants.SCREEN_WIDTH/10;
         Constants.Y_UNIT = Constants.SCREEN_HEIGHT/5;
 
-        setContentView(R.layout.activity_main);
-    }
-
-    public void playGame(View view) {
-        Intent intent = new Intent(this, GameActivity.class);
-        startActivity(intent);
+        setContentView(new GamePanel(this));
     }
 }
-
