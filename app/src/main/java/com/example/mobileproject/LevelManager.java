@@ -76,6 +76,22 @@ public class LevelManager {
         obstacles.add(new Obstacle(7.25,7.75,2.25,2.75,2));
         levels.add(new Level(obstacles, 0.85, 4, 10000, 5000));
 
+        // Level 7
+        obstacles = new ArrayList<>();
+        // Bumper
+        obstacles.add(new Obstacle(5,6,1,4,4));
+        // Goal
+        obstacles.add(new Obstacle(8.75,9.25,2.25,2.75,2));
+        levels.add(new Level(obstacles, 1, 2.5, 10000, 5000));
+
+        // Level 8
+        obstacles = new ArrayList<>();
+        // Bumper
+        obstacles.add(new Obstacle(3,4,1,5,4));
+        obstacles.add(new Obstacle(6,7,0,4,4));
+        // Goal
+        obstacles.add(new Obstacle(8.5,9,0.75,1.25,2));
+        levels.add(new Level(obstacles, 1, 2.5, 10000, 5000));
     }
 
     public Level getLevel(int id){

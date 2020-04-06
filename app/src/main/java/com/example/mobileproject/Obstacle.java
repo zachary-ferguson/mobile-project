@@ -8,8 +8,8 @@ import static android.graphics.Color.rgb;
 
 public class Obstacle implements GameObject {
     private Rect rectangle;
-    private int type; // 0 - Wall 1 - Water 2 - Goal 3 - Sand
-    private int colorArr[] = {rgb(171, 171, 171), rgb(28,236,255), rgb(255,213,28), rgb(242, 208, 107)};
+    private int type; // 0 - Wall 1 - Water 2 - Goal 3 - Sand 4 - Bumper
+    private int colorArr[] = {rgb(171, 171, 171), rgb(28,236,255), rgb(255,213,28), rgb(242, 208, 107),rgb(255, 0, 170)};
 
     public Obstacle(double left, double right, double top, double bottom, int type) {
         this.rectangle = new Rect((int)(Constants.X_UNIT*left),(int)(Constants.Y_UNIT*top),(int)(Constants.X_UNIT*right),(int)(Constants.Y_UNIT*bottom));
