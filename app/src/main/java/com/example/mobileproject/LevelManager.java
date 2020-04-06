@@ -24,8 +24,8 @@ public class LevelManager {
         obstacles.add(new Obstacle(5,6,0,3,0));
         obstacles.add(new Obstacle(5,8,2,3,0));
         //Water
-        obstacles.add(new Obstacle(0,5,0,1,1));
-        obstacles.add(new Obstacle(9,10,0,5,1));
+        obstacles.add(new Obstacle(0,5,0,0.5,1));
+        obstacles.add(new Obstacle(9.5,10,0,5,1));
         //Goal
         obstacles.add(new Obstacle(6.75,7.25,0.75,1.25,2));
         levels.add(new Level(obstacles, 1, 4,10000,5000));
@@ -41,10 +41,10 @@ public class LevelManager {
         // Level 4
         obstacles = new ArrayList<>();
         //Water
-        obstacles.add(new Obstacle(4,7,0,2,1));
-        obstacles.add(new Obstacle(4,7,3,5,1));
+        obstacles.add(new Obstacle(4,7,0,1.75,1));
+        obstacles.add(new Obstacle(4,7,3.25,5,1));
         //Sand
-        obstacles.add(new Obstacle(4,7,2,3,3));
+        obstacles.add(new Obstacle(4,7,1.75,3.25,3));
         //Goal
         obstacles.add(new Obstacle(8.75,9.25,2.25,2.75,2));
         levels.add(new Level(obstacles, 1, 2.5, 10000, 5000));
