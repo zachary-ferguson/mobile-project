@@ -1,6 +1,8 @@
 package com.example.mobileproject;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -59,6 +61,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback{
     private OrientationData orientationData; //move to gamePlayScene when made
     private long frameTime; //move to gamePlayScene when made
     private long startTime;
+    private long endTimeTotalMS;
     private long endTime;
     private long endTimeMS;
     private long currentTime;
@@ -66,6 +69,17 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback{
 
     private Paint paint = new Paint();
     private Paint paintStroke = new Paint();
+    private BitmapFactory bf;
+    private Bitmap retryImage;
+    private Bitmap nextImage;
+    private Bitmap selectImage;
+    private Bitmap starImage;
+    private Bitmap starGoldImage;
+    private Rect retryRect;
+    private Rect nextRect;
+    private Rect selectRect;
+
+    private int starRank;
 
     public GamePanel(Context context) {
         super(context);
@@ -98,6 +112,17 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback{
         maxXSpeed = 1.5f;
 
         startTime = System.currentTimeMillis();
+
+        bf = new BitmapFactory();
+        retryImage = bf.decodeResource(Constants.CURRENT_CONTEXT.getResources(), R.drawable.retry);
+        retryRect = new Rect(Constants.SCREEN_WIDTH/2 - 100,(Constants.SCREEN_HEIGHT/3)*2 - 100,Constants.SCREEN_WIDTH/2 + 100,(Constants.SCREEN_HEIGHT/3)*2 + 300);
+        nextImage = bf.decodeResource(Constants.CURRENT_CONTEXT.getResources(), R.drawable.next);
+        nextRect = new Rect((Constants.SCREEN_WIDTH/5)*4 - 100,(Constants.SCREEN_HEIGHT/3)*2 - 100,(Constants.SCREEN_WIDTH/5)*4 + 100,(Constants.SCREEN_HEIGHT/3)*2 + 300);
+        selectImage = bf.decodeResource(Constants.CURRENT_CONTEXT.getResources(), R.drawable.select);
+        selectRect = new Rect(Constants.SCREEN_WIDTH/5 - 100,(Constants.SCREEN_HEIGHT/3)*2 - 100,Constants.SCREEN_WIDTH/5 + 100,(Constants.SCREEN_HEIGHT/3)*2 + 300);
+
+        starImage = bf.decodeResource(Constants.CURRENT_CONTEXT.getResources(), R.drawable.star);
+        starGoldImage = bf.decodeResource(Constants.CURRENT_CONTEXT.getResources(), R.drawable.star_gold);
 
         setFocusable(true);
     }
@@ -147,29 +172,30 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback{
     public boolean onTouchEvent(MotionEvent event) {
         switch(event.getAction()) {
             case MotionEvent.ACTION_DOWN:
+                /**
                 if(!death && !goal && circlePlayer.getShape().getBounds().contains((int)event.getX(), (int)event.getY())) {
                     //System.out.println("Test tap");
                     movingPlayer = true;
-                }
+                }*/
                 if(death) {
                     reset();
                     death = false;
                     orientationData.newGame();
                 }else if(goal){
-                    currentLevel++;
-                    reset();
-                    goal = false;
-                    orientationData.newGame();
+                    if(retryRect.contains((int)event.getX(),(int)event.getY())){
+                        reset();
+                        goal = false;
+                    } else if(nextRect.contains((int)event.getX(),(int)event.getY())){
+                        currentLevel++;
+                        reset();
+                        goal = false;
+                    }
                 }
+                orientationData.newGame();
                 break;
             case MotionEvent.ACTION_MOVE:
-                if(!death && !goal && movingPlayer){
-                    //System.out.println("Test move");
-                    playerPoint.set((int)event.getX(), (int)event.getY());
-                }
                 break;
             case MotionEvent.ACTION_UP:
-                movingPlayer = false;
                 break;
         }
 
@@ -282,9 +308,10 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback{
                         }
                         circlePlayer.update(playerPoint);
                     } else if (collideObstacle.getType() == 2) {
-                        endTimeMS = System.currentTimeMillis() - startTime;
-                        endTime = endTimeMS / 1000;
-                        endTimeMS -= (endTime * 1000);
+                        endTimeTotalMS = System.currentTimeMillis() - startTime;
+                        endTime = endTimeTotalMS / 1000;
+                        endTimeMS = endTimeTotalMS - (endTime * 1000);
+                        starRank = levelManager.getLevel(currentLevel).getStarRank(endTimeTotalMS);
                         goal = true;
                     }
                     if (collideObstacle.getType() == 3) {
@@ -302,8 +329,10 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback{
         canvas.drawColor(rgb(26, 125, 51));
 
         //rectPlayer.draw(canvas);
-        obstacleManager.draw(canvas);
-        circlePlayer.draw(canvas);
+        if(!goal) {
+            obstacleManager.draw(canvas);
+            circlePlayer.draw(canvas);
+        }
 
         paint.setTextAlign(Paint.Align.CENTER);
         paint.setTextSize(100);
@@ -330,8 +359,30 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback{
             canvas.drawText("OUT OF BOUNDS - Tap To Retry",Constants.SCREEN_WIDTH/2,Constants.SCREEN_HEIGHT/2,paint);
             canvas.drawText("OUT OF BOUNDS - Tap To Retry",Constants.SCREEN_WIDTH/2,Constants.SCREEN_HEIGHT/2,paintStroke);
         } else if(goal) {
-            canvas.drawText("Completed in " + endTime + "." + endTimeMS + "s - Tap For Next Hole",Constants.SCREEN_WIDTH/2,Constants.SCREEN_HEIGHT/2,paint);
-            canvas.drawText("Completed in " + endTime + "." + endTimeMS + "s - Tap For Next Hole",Constants.SCREEN_WIDTH/2,Constants.SCREEN_HEIGHT/2,paintStroke);
+            canvas.drawText("Completed in " + endTime + "." + endTimeMS + "s",Constants.SCREEN_WIDTH/2,Constants.SCREEN_HEIGHT/7,paint);
+            canvas.drawBitmap(retryImage, null, new Rect(Constants.SCREEN_WIDTH/2 - 100,(Constants.SCREEN_HEIGHT/3)*2 - 100,Constants.SCREEN_WIDTH/2 + 100,(Constants.SCREEN_HEIGHT/3)*2 + 100), new Paint());
+            canvas.drawText("Retry Level",Constants.SCREEN_WIDTH/2,(Constants.SCREEN_HEIGHT/3)*2 + 250,paint);
+            canvas.drawBitmap(nextImage, null, new Rect((Constants.SCREEN_WIDTH/5)*4 - 100,(Constants.SCREEN_HEIGHT/3)*2 - 100,(Constants.SCREEN_WIDTH/5)*4 + 100,(Constants.SCREEN_HEIGHT/3)*2 + 100), new Paint());
+            canvas.drawText("Next Level",(Constants.SCREEN_WIDTH/5)*4,(Constants.SCREEN_HEIGHT/3)*2 + 250,paint);
+            canvas.drawBitmap(selectImage, null, new Rect(Constants.SCREEN_WIDTH/5 - 100,(Constants.SCREEN_HEIGHT/3)*2 - 100,Constants.SCREEN_WIDTH/5 + 100,(Constants.SCREEN_HEIGHT/3)*2 + 100), new Paint());
+            canvas.drawText("Level Select",Constants.SCREEN_WIDTH/5,(Constants.SCREEN_HEIGHT/3)*2 + 250,paint);
+
+            if(starRank == 3){
+                canvas.drawText("EAGLE!",Constants.SCREEN_WIDTH/2,Constants.SCREEN_HEIGHT/4,paint);
+                canvas.drawBitmap(starGoldImage, null, new Rect((Constants.SCREEN_WIDTH/5)*2 - 100,(Constants.SCREEN_HEIGHT/5)*2 - 100,(Constants.SCREEN_WIDTH/5)*2 + 100,(Constants.SCREEN_HEIGHT/5)*2 + 100), new Paint());
+                canvas.drawBitmap(starGoldImage, null, new Rect(Constants.SCREEN_WIDTH/2 - 100,(Constants.SCREEN_HEIGHT/5)*2 - 100,Constants.SCREEN_WIDTH/2 + 100,(Constants.SCREEN_HEIGHT/5)*2 + 100), new Paint());
+                canvas.drawBitmap(starGoldImage, null, new Rect((Constants.SCREEN_WIDTH/5)*3 - 100,(Constants.SCREEN_HEIGHT/5)*2 - 100,(Constants.SCREEN_WIDTH/5)*3 + 100,(Constants.SCREEN_HEIGHT/5)*2 + 100), new Paint());
+            } else if (starRank == 2){
+                canvas.drawText("BIRDIE!",Constants.SCREEN_WIDTH/2,Constants.SCREEN_HEIGHT/4,paint);
+                canvas.drawBitmap(starGoldImage, null, new Rect((Constants.SCREEN_WIDTH/5)*2 - 100,(Constants.SCREEN_HEIGHT/5)*2 - 100,(Constants.SCREEN_WIDTH/5)*2 + 100,(Constants.SCREEN_HEIGHT/5)*2 + 100), new Paint());
+                canvas.drawBitmap(starGoldImage, null, new Rect(Constants.SCREEN_WIDTH/2 - 100,(Constants.SCREEN_HEIGHT/5)*2 - 100,Constants.SCREEN_WIDTH/2 + 100,(Constants.SCREEN_HEIGHT/5)*2 + 100), new Paint());
+                canvas.drawBitmap(starImage, null, new Rect((Constants.SCREEN_WIDTH/5)*3 - 100,(Constants.SCREEN_HEIGHT/5)*2 - 100,(Constants.SCREEN_WIDTH/5)*3 + 100,(Constants.SCREEN_HEIGHT/5)*2 + 100), new Paint());
+            } else {
+                canvas.drawText("PAR!",Constants.SCREEN_WIDTH/2,Constants.SCREEN_HEIGHT/4,paint);
+                canvas.drawBitmap(starGoldImage, null, new Rect((Constants.SCREEN_WIDTH/5)*2 - 100,(Constants.SCREEN_HEIGHT/5)*2 - 100,(Constants.SCREEN_WIDTH/5)*2 + 100,(Constants.SCREEN_HEIGHT/5)*2 + 100), new Paint());
+                canvas.drawBitmap(starImage, null, new Rect(Constants.SCREEN_WIDTH/2 - 100,(Constants.SCREEN_HEIGHT/5)*2 - 100,Constants.SCREEN_WIDTH/2 + 100,(Constants.SCREEN_HEIGHT/5)*2 + 100), new Paint());
+                canvas.drawBitmap(starImage, null, new Rect((Constants.SCREEN_WIDTH/5)*3 - 100,(Constants.SCREEN_HEIGHT/5)*2 - 100,(Constants.SCREEN_WIDTH/5)*3 + 100,(Constants.SCREEN_HEIGHT/5)*2 + 100), new Paint());
+            }
         }
     }
 }
