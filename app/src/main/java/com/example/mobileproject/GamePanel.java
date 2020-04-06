@@ -1,6 +1,7 @@
 package com.example.mobileproject;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -24,6 +25,7 @@ import static java.lang.Math.abs;
 
 public class GamePanel extends SurfaceView implements SurfaceHolder.Callback{
     private MainThread thread;
+    private Context mContext;
 
     private RectPlayer rectPlayer;
     private CirclePlayer circlePlayer;
@@ -83,7 +85,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback{
 
     public GamePanel(Context context) {
         super(context);
-
+        mContext = context;
         getHolder().addCallback(this);
 
         Constants.CURRENT_CONTEXT = context;
@@ -189,6 +191,9 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback{
                         currentLevel++;
                         reset();
                         goal = false;
+                    } else if(selectRect.contains((int)event.getX(),(int)event.getY())){
+                        Intent intent = new Intent(mContext, MainActivity.class);
+                        mContext.startActivity(intent);
                     }
                 }
                 orientationData.newGame();
