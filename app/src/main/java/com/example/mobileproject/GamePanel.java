@@ -313,6 +313,31 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback{
                         endTimeMS = endTimeTotalMS - (endTime * 1000);
                         starRank = levelManager.getLevel(currentLevel).getStarRank(endTimeTotalMS);
                         goal = true;
+                    } else if(collideObstacle.getType() == 4){
+                        Rect obRect = collideObstacle.getRectangle();
+
+                        leftCheck = abs(playerPoint.x + playerWidth / 2 - obRect.left);
+                        rightCheck = abs(playerPoint.x - playerWidth / 2 - obRect.right);
+                        topCheck = abs(playerPoint.y + playerHeight / 2 - obRect.top);
+                        bottomCheck = abs(playerPoint.y - playerHeight / 2 - obRect.bottom);
+
+                        minCollisionVertical = Math.min(topCheck, bottomCheck);
+                        minCollisionHorizontal = Math.min(leftCheck, rightCheck);
+                        minCollision = Math.min(minCollisionHorizontal, minCollisionVertical);
+                        if (minCollision == leftCheck) {
+                            xSpeed = -xSpeed*2;
+                            playerPoint.x = obRect.left - playerWidth / 2;
+                        } else if (minCollision == rightCheck) {
+                            xSpeed = -xSpeed*2;
+                            playerPoint.x = obRect.right + playerWidth / 2;
+                        } else if (minCollision == bottomCheck) {
+                            playerPoint.y = obRect.bottom + playerHeight / 2;
+                            ySpeed = -ySpeed*2;
+                        } else {
+                            playerPoint.y = obRect.top - playerHeight / 2;
+                            ySpeed = -ySpeed*2;
+                        }
+                        circlePlayer.update(playerPoint);
                     }
                     if (collideObstacle.getType() == 3) {
                         sand = true;
