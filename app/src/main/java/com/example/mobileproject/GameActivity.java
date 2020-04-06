@@ -25,9 +25,4 @@ public class GameActivity extends Activity {
 
         setContentView(new GamePanel(this));
     }
-
-    public void goHome(View view) {
-        Intent intent = new Intent(this, MainActivity.class);
-        startActivity(intent);
-    }
 }
