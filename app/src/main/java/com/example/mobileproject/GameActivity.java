@@ -1,8 +1,10 @@
 package com.example.mobileproject;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
@@ -22,5 +24,10 @@ public class GameActivity extends Activity {
         Constants.Y_UNIT = Constants.SCREEN_HEIGHT/5;
 
         setContentView(new GamePanel(this));
+    }
+
+    public void goHome(View view) {
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
     }
 }
